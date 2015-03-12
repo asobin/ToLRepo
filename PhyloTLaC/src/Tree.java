@@ -10,6 +10,7 @@ public class Tree
     PhyloNodeID ID; //the TreeNode of the desired TreeNode
     List<PhyloNodeID> thisTreeNodesData; //holds the eye color of the desired people
     List<PhyloNodeID> siblings; //holds the siblings of an individual
+    List<PhyloNodeID> children; //holds the children of an individual
     /**
      * Tree
      * constructs a family tree, initializes all variables
@@ -20,6 +21,7 @@ public class Tree
         maxGenerations = 0;
         thisTreeNodesData = new ArrayList<PhyloNodeID>();
         siblings = new ArrayList<PhyloNodeID>();
+        children = new ArrayList<PhyloNodeID>();
         firstAncestor = null;
     }
     /**
@@ -164,7 +166,7 @@ public class Tree
             return false;
         }
         //otherwise add the TreeNode and return true.
-        addNewChild(root, parentName, TreeNode);
+        addTreeNode(root, parentName, TreeNode);
         return true;
     }
     /**
@@ -269,6 +271,7 @@ public class Tree
         }
         return thisTreeNodesData;
             }
+    
     /**
      * getSiblings
      * Return the list of siblings of this TreeNode.
@@ -318,13 +321,13 @@ public class Tree
         return siblings;
     }
     /**
-     * addNewChild
-     * recursive private method for addNewChild
+     * addTreeNode
+     * recursive private method for addTreeNode
      * @param name
      * @param parentName
      * @param p
      */
-    private void addNewChild(TreeNode<PhyloNodeID> name,
+    private void addTreeNode(TreeNode<PhyloNodeID> name,
             String parentName, PhyloNodeID p)
     {
         if(name.getChildren() == null)
@@ -337,7 +340,7 @@ public class Tree
         Iterator<TreeNode<PhyloNodeID>> itr = name.getChildren().iterator();
         while(itr.hasNext())
         {
-            addNewChild(itr.next(), parentName, p); //recursive case
+            addTreeNode(itr.next(), parentName, p); //recursive case
         }
     }
     /**

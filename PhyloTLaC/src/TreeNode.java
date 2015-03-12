@@ -4,6 +4,7 @@ public class TreeNode<E>
 	private PhyloNodeID PhyloNodeID;
 	private TreeNode<E> parentNode;
 	private List<TreeNode<E>> children;
+	
 	/** Constructs a TreeNode with PhyloNodeID and parentNode. */
 	public TreeNode (PhyloNodeID PhyloNodeID, TreeNode<E> parentNode)
 	{
