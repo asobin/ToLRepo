@@ -10,7 +10,6 @@ public class Tree
     PhyloNodeID ID; //the TreeNode of the desired TreeNode
     List<PhyloNodeID> thisTreeNodesData; //holds the eye color of the desired people
     List<PhyloNodeID> siblings; //holds the siblings of an individual
-    List<PhyloNodeID> children; //holds the children of an individual
     /**
      * Tree
      * constructs a family tree, initializes all variables
@@ -21,7 +20,6 @@ public class Tree
         maxGenerations = 0;
         thisTreeNodesData = new ArrayList<PhyloNodeID>();
         siblings = new ArrayList<PhyloNodeID>();
-        children = new ArrayList<PhyloNodeID>();
         firstAncestor = null;
     }
     /**
@@ -127,7 +125,7 @@ public class Tree
     {
         if(contains(name))
         {
-            return findTreeNode(root,name).getPhyloNodeID();
+            return findPhyloNodeID(root,name).getPhyloNodeID();
         }
         return null;
     }
@@ -138,25 +136,27 @@ public class Tree
      * @param parentName
      * @return true iff TreeNode is added correctly(no duplicate/has parent)
      */
-    public boolean addTreeNode(PhyloNodeID TreeNode, String parentName)
+    public boolean addPhyloNodeID(PhyloNodeID ID, String parentName)
     {
         //When the root and parentName are both null, return true.
         //Do not throw an IllegalArgumentException for this circumstance only.
         if(parentName == null && root == null)
         {
-            root = new TreeNode<PhyloNodeID>(TreeNode, null);
+            root = new TreeNode<PhyloNodeID>(ID, null);
             return true;
         }
-        
+        //When the parentName of the node being added refers to the root
+        //as its parent.
         if(parentName.equals(root.getPhyloNodeID().getName()))
         {
-            TreeNode<PhyloNodeID> childTreeNode = new TreeNode<PhyloNodeID>(TreeNode, root);
+            TreeNode<PhyloNodeID> childTreeNode =
+            		new TreeNode<PhyloNodeID>(ID, root);
             root.addChild(childTreeNode);
             return true;
         }
         //if the family tree already has this TreeNode, don't do anything
         //and return false
-        if(contains(TreeNode.getName()))
+        if(contains(ID.getName()))
         {
             return false;
         }
@@ -166,7 +166,7 @@ public class Tree
             return false;
         }
         //otherwise add the TreeNode and return true.
-        addTreeNode(root, parentName, TreeNode);
+        addNewChild(root, parentName, ID);
         return true;
     }
     /**
@@ -179,7 +179,7 @@ public class Tree
     public boolean contains(String name)
     {
         //return contains(root, name);
-        if(findTreeNode(root,name) == null)
+        if(findPhyloNodeID(root,name) == null)
         {
             return false;
         }
@@ -206,14 +206,13 @@ public class Tree
         {
             root = null;
             maxGenerations = 0;
-            thisTreeNodesData = new ArrayList<PhyloNodeID>();
-            
+            thisTreeNodesData = new ArrayList<PhyloNodeID>(); 
             siblings = new ArrayList<PhyloNodeID>();
             firstAncestor = null;
             return true;
         }
         // otherwise, return true after the removal
-        return removeTreeNode(name);
+        return removePhyloNodeID(name);
     }
     /**
      * removeTreeNode
@@ -221,10 +220,11 @@ public class Tree
      * @param name
      * @return true iff TreeNode was properly removed
      */
-    private boolean removeTreeNode(String name)
+    private boolean removePhyloNodeID(String name)
     {
-        if(findTreeNode(root,name) != null){
-            TreeNode<PhyloNodeID> removed = findTreeNode(root,name);
+        if(findPhyloNodeID(root,name) != null)
+        {
+            TreeNode<PhyloNodeID> removed = findPhyloNodeID(root,name);
             removed.getParent().getChildren().remove(removed);
             return true;
         }
@@ -233,45 +233,6 @@ public class Tree
             return false;
         }
     }
-    /**
-     * getTreeNodesWithThisData
-     * Return a list of TreeNodes with matching data.
-     * @param TreeNodesData
-     * @return thisTreeNodesData
-     */
-    public List<PhyloNodeID> getTreeNodesWithThisData(String TreeNodesData)
-    {
-        //create new arrayList for the TreeNode being passed in to be returned
-        thisTreeNodesData = new ArrayList<PhyloNodeID>();
-        thisTreeNodesData = getTreeNodesWithThisData(root, TreeNodesData);
-        return thisTreeNodesData;
-    }
-    /**
-     * getTreeNodesWithThisData
-     * private recursive method returns list of TreeNodes with matching data.
-     * @param n
-     * @param TreeNodesData
-     * @return thisTreeNodesData
-     */
-    private List<PhyloNodeID> getTreeNodesWithThisData(TreeNode<PhyloNodeID> n,
-            String TreeNodesData)
-            {
-        if(n == null)
-        {
-            return null;
-        }
-        if(n.getPhyloNodeID().getTreeNodesWithThisData().equals(TreeNodesData))
-        {
-            thisTreeNodesData.add(n.getPhyloNodeID());
-        }
-        Iterator<TreeNode<PhyloNodeID>> itr = n.getChildren().iterator();
-        while(itr.hasNext())
-        {
-            getTreeNodesWithThisData(itr.next(),TreeNodesData);
-        }
-        return thisTreeNodesData;
-            }
-    
     /**
      * getSiblings
      * Return the list of siblings of this TreeNode.
@@ -321,36 +282,40 @@ public class Tree
         return siblings;
     }
     /**
-     * addTreeNode
-     * recursive private method for addTreeNode
+     * addNewChild
+     * recursive private method for addNewChild
      * @param name
      * @param parentName
      * @param p
      */
-    private void addTreeNode(TreeNode<PhyloNodeID> name,
+    private void addNewChild(TreeNode<PhyloNodeID> name,
             String parentName, PhyloNodeID p)
     {
+    	//if the parent node doesn't have any children.
         if(name.getChildren() == null)
-            return; //base
+            return; //base case
+        //if the parent node's name matches the parent name of the child node
         if(name.getPhyloNodeID().getName().equals(parentName))
         {
             name.addChild(new TreeNode<PhyloNodeID>(p, name));
-            return; //base
+            return; //base case  
         }
+        //iterate thru parent's getChildren list
         Iterator<TreeNode<PhyloNodeID>> itr = name.getChildren().iterator();
         while(itr.hasNext())
         {
-            addTreeNode(itr.next(), parentName, p); //recursive case
+            addNewChild(itr.next(), parentName, p); //recursive case
         }
     }
     /**
-     * findTreeNode
+     * findPhyloNodeID
      * Returns the TreeNode with given name, otherwise
      * return null.
      * @param n, name
      * @return TreeNode if found in the tree, otherwise return null
      */
-    private TreeNode<PhyloNodeID> findTreeNode(TreeNode<PhyloNodeID> n , String name)
+    private TreeNode<PhyloNodeID> findPhyloNodeID
+    (TreeNode<PhyloNodeID> n , String name)
     {
         if(n == null)
         {
@@ -367,7 +332,7 @@ public class Tree
         Iterator<TreeNode<PhyloNodeID>> itr = n.getChildren().iterator();
         while(itr.hasNext())
         {
-            TreeNode<PhyloNodeID> tmp = findTreeNode(itr.next(),name);
+            TreeNode<PhyloNodeID> tmp = findPhyloNodeID(itr.next(),name);
             //when the recursion finds a TreeNode, return that TreeNode
             if(tmp != null)
             {

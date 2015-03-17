@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,38 +25,60 @@ public class tlacMain
 	public static String regex = ","; //used bc inputFile is csv
 	/**
 	 * main method 
-	 * @param args
+	 * @param args is an array of string file names/locations
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException
 	{
+		boolean stop = false;
 		if(args.length > 2 || args.length == 0)
 		{
 			System.out.println("Program accepts only " +
 					"two command line arguments. Goodbye");
 			System.exit(-1);
 		}
-		//setup the BST
-		Tree tree = new Tree();
+
 		//next we read in and generate the tree from command line args
 		File treeFile = new File(args[1]);
-		Scanner scn = new Scanner(treeFile);
-		while(scn.hasNextLine())
+		//makes sure file contents exist and are readable
+		if(!treeFile.canRead() || !treeFile.exists())
 		{
-			String[] lineData = scn.nextLine().split(regex);
-			PhyloNodeID ID1 = new PhyloNodeID(lineData[1], lineData[0]);
-			//System.out.println(lineData[1] +" "+ lineData[0]);
-			if(lineData[0].isEmpty())
-			{
-				tree.addTreeNode(ID1,  null); 
-			}//end if
-			else
-				tree.addTreeNode(ID1,lineData[0]);
+			System.out.println("Error: cannot access input file");
+			System.exit(-1);
+		}
 
-		}//end while
-		System.out.println(tree.getNumberOfTreeNodes());
+		//setup the tree
+		Tree tree = new Tree();
+		try //this is where the tree will be populated
+		{
+			
+			Scanner scn = new Scanner(treeFile);
+			while(scn.hasNextLine())
+			{
+				String[] lineData = scn.nextLine().split(regex);
+				PhyloNodeID ID1 = new PhyloNodeID(lineData[1]);
+				//System.out.println(lineData[1] +" "+ lineData[0]);
+				if(lineData[0].isEmpty())
+				{
+					tree.addPhyloNodeID(ID1,  null); 
+				}//end if
+				
+				tree.addPhyloNodeID(ID1,lineData[0]);
+
+			}//end while	
+			scn.close(); 
+		}//end try
 		
-		scn.close(); 
+		catch(FileNotFoundException e)
+		{
+			System.out.println("file not found");
+		}
+		
+		System.out.println("Height: "+tree.getMaxGenerations());
+		System.out.println("Root ID: "+ tree.getFirstAncestor());
+		System.out.println("Number of nodes:  "
+		+ tree.getNumberOfTreeNodes());
+		
 		double newMatrix[][];
 		//BufferedWriter writer = new BufferedWriter(new FileWriter("fileOutput.txt", true));
 		newMatrix = getFile(args);
@@ -72,7 +95,63 @@ public class tlacMain
 		}
 		writer.close();
 		 **/
-
+		
+		
+		while(!stop)
+		{
+			Scanner scn = new Scanner(System.in);
+			System.out.println("Enter a node ID: ");
+			String input = scn.nextLine();
+			if (input.length() > 3)
+			{
+				if(tree.contains(input))
+				{
+					final String parentName = tree.getParent(input); //TODO write this method in the Tree Class
+					final String childName = input;
+					final int parentsIndex;
+					final int childsIndex;
+					File indexRefLookUp = new File(args[0]);
+					Scanner indexLU = new Scanner(indexRefLookUp);
+					String[] lineLU = indexLU.nextLine().split(regex);
+					indexLU.close();
+					for(int i =0; i < lineLU.length; i++)
+					{
+						//determines index of parent
+						if(lineLU[i].equals(parentName))
+						{
+							parentsIndex = i;
+						}
+						//determines index of child
+						if(lineLU[i].equals(childName))
+						{
+							childsIndex = i;
+						}
+						
+					}//end for
+					
+					Stack<Double> parentStack = new Stack<Double>();
+					for(int f = 0; f < newMatrix.length; f++)
+					{
+						parentStack.push(newMatrix[f][parentsIndex]);
+					}
+					Stack<Double> childStack = new Stack<Double>();
+					for(int q=0; q < newMatrix.length; q++)
+					{
+						childStack.push(newMatrix[q][childsIndex]);
+					}
+					
+					//write methods that compare the values of the stacks
+					//added(parentStack, childStack);
+					//lost(parentStack, childStack);
+					//shared(parentStack, childStack);
+					//neverThere(parentStack, childStack);
+					
+					
+				}//end if
+			}//end if
+		}//end while 
+		
+		
 
 	}
 
@@ -84,9 +163,6 @@ public class tlacMain
 	 */
 	public static double[][] getFile(String[] args)
 	{
-		//namesOfNodes is an array list that will store the names of the nodes
-		//and be used later when using the stacks for comparisons
-		ArrayList<String> namesOfNodes = new ArrayList<String>();
 		try 
 		{
 			//initialize the file as a variable
@@ -95,11 +171,6 @@ public class tlacMain
 			Scanner sc = new Scanner(initialFile);
 			//first line is special case
 			String[] firstLine = sc.nextLine().split(regex);
-			for(int i =1; i < firstLine.length; i++)
-			{
-				namesOfNodes.add(firstLine[i]);
-
-			}
 
 			//line is the line of input being read in thru the inputFile
 			int line = 0;
@@ -153,6 +224,57 @@ public class tlacMain
 			}
 		}
 		return array_new;
+	}//end transpose
+	
+	/**
+	 * TODO write this method
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int added(Stack<Double> parent, Stack<Double> child)
+	{
+		int added = 0;
+		
+		return added;
+	}
+
+	/**
+	 * TODO write this method
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int lost(Stack<Double> parent, Stack<Double> child)
+	{
+		int lost = 0;
+		
+		return lost;
+	}
+	
+	/**
+	 * TODO write this method
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int shared(Stack<Double> parent, Stack<Double> child)
+	{
+		int shared = 0;
+		
+		return shared;
+	}
+	/**
+	 * TODO write this method
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int neverThere(Stack<Double> parent, Stack<Double> child)
+	{
+		int neverThere = 0;
+		
+		return neverThere;
 	}
 
 }

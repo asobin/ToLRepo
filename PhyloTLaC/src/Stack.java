@@ -66,6 +66,7 @@ public class Stack<E> implements StackADT<E>
 	}
 	/**
 	 * Pops the top item off the stack and returns it.
+	 * @param  
 	 *
 	 * @return the top item of the stack
 	 * @throws EmptyStackException if the stack is empty

@@ -1,21 +1,21 @@
 import java.util.*;
 public class TreeNode<E>
 {
-	private PhyloNodeID PhyloNodeID;
+	private PhyloNodeID ID;
 	private TreeNode<E> parentNode;
 	private List<TreeNode<E>> children;
 	
 	/** Constructs a TreeNode with PhyloNodeID and parentNode. */
-	public TreeNode (PhyloNodeID PhyloNodeID, TreeNode<E> parentNode)
+	public TreeNode (PhyloNodeID ID, TreeNode<E> parentNode)
 	{
-		this.PhyloNodeID = PhyloNodeID;
+		this.ID = ID;
 		this.parentNode = parentNode;
 		children = new ArrayList<TreeNode<E>>();
 	}
 	/** Return the PhyloNodeID in this node */
 	public PhyloNodeID getPhyloNodeID()
 	{
-		return PhyloNodeID;
+		return ID;
 	}
 	/** Return the parent for the PhyloNodeID in this node */
 	public TreeNode<E> getParent()
