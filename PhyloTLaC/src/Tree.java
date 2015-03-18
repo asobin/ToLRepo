@@ -50,7 +50,7 @@ public class Tree
         int numberOfTreeNodes = 0;
         if(root != null)
         {
-            numberOfTreeNodes = getNumberOfTreeNodes(root) + 1; //1 for the root!
+            numberOfTreeNodes = getNumberOfTreeNodes(root) + 1; //1 for the root
         }
         return numberOfTreeNodes;
     }
@@ -341,4 +341,5 @@ public class Tree
         }
         return null;
     }
+    
 }

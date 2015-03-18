@@ -27,10 +27,10 @@ public class tlacMain
 	 * main method 
 	 * @param args is an array of string file names/locations
 	 * @throws IOException
+	 * @throws EmptyStackException 
 	 */
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws IOException, EmptyStackException
 	{
-		boolean stop = false;
 		if(args.length > 2 || args.length == 0)
 		{
 			System.out.println("Program accepts only " +
@@ -56,7 +56,7 @@ public class tlacMain
 			while(scn.hasNextLine())
 			{
 				String[] lineData = scn.nextLine().split(regex);
-				PhyloNodeID ID1 = new PhyloNodeID(lineData[1]);
+				PhyloNodeID ID1 = new PhyloNodeID(lineData[1], lineData[0]);
 				//System.out.println(lineData[1] +" "+ lineData[0]);
 				if(lineData[0].isEmpty())
 				{
@@ -96,20 +96,18 @@ public class tlacMain
 		writer.close();
 		 **/
 		
-		
-		while(!stop)
-		{
 			Scanner scn = new Scanner(System.in);
-			System.out.println("Enter a node ID: ");
+			System.out.print("Enter a node ID: ");
 			String input = scn.nextLine();
-			if (input.length() > 3)
-			{
+			if (input.length() > 2)
+			{	
 				if(tree.contains(input))
 				{
-					final String parentName = tree.getParent(input); //TODO write this method in the Tree Class
+					final String parentName = 
+							tree.getPhyloNodeID(input).getParentName();
 					final String childName = input;
-					final int parentsIndex;
-					final int childsIndex;
+					int parentsIndex = 0;
+					int childsIndex = 0;
 					File indexRefLookUp = new File(args[0]);
 					Scanner indexLU = new Scanner(indexRefLookUp);
 					String[] lineLU = indexLU.nextLine().split(regex);
@@ -129,27 +127,36 @@ public class tlacMain
 						
 					}//end for
 					
+					final int pI = parentsIndex;
+					System.out.println("Parent's index: "+pI);
+					final int cI = childsIndex;
+					System.out.println("Child's index: "+cI);
+					
 					Stack<Double> parentStack = new Stack<Double>();
 					for(int f = 0; f < newMatrix.length; f++)
 					{
-						parentStack.push(newMatrix[f][parentsIndex]);
+						parentStack.push(newMatrix[f][pI]);
 					}
 					Stack<Double> childStack = new Stack<Double>();
 					for(int q=0; q < newMatrix.length; q++)
 					{
-						childStack.push(newMatrix[q][childsIndex]);
+						childStack.push(newMatrix[q][cI]);
 					}
 					
 					//write methods that compare the values of the stacks
-					//added(parentStack, childStack);
-					//lost(parentStack, childStack);
-					//shared(parentStack, childStack);
-					//neverThere(parentStack, childStack);
-					
+					//first checking if internal or leaf edge
+					System.out.println("Internal Nodes added: "+
+							addedInternal(parentStack, childStack));
+					//addedLeaf(parentStack, childStack);
+					//lostInternal(parentStack, childStack);
+					//lostLeaf(parentStack, childStack);
+					//sharedInternal(parentStack, childStack);
+					//sharedLeaf(parentStack, childStack);
+					//neverThereInternal(parentStack, childStack);
+					//neverThereLeaf(parentStack, childStack);
 					
 				}//end if
 			}//end if
-		}//end while 
 		
 		
 
@@ -226,55 +233,158 @@ public class tlacMain
 		return array_new;
 	}//end transpose
 	
+	
 	/**
 	 * TODO write this method
+	 * this is a method that checks the internal edge of the tree
+	 * for featureIDs that were added along this edge
+	 * we use the following general rule to determine a gene as added:
+	 * parent >= 0.75 && child <= 0.25
 	 * @param parent
 	 * @param child
 	 * @return
+	 * @throws EmptyStackException 
 	 */
-	public static int added(Stack<Double> parent, Stack<Double> child)
+	public static int addedInternal(Stack<Double> parent, Stack<Double> child) 
+			throws EmptyStackException
 	{
-		int added = 0;
+		int addedIn = 0;
 		
-		return added;
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval >= 0.75 && cval <= 0.25)
+			{
+				addedIn++;
+			}
+
+		}
+		return addedIn;
 	}
 
 	/**
 	 * TODO write this method
+	 * this is a method that checks the a leaf edge of the tree
+	 * for featureIDs that were added along this edge
+	 * we use the following general rule to determine a gene as added:
+	 * parent >= 0.75 && child == 1
 	 * @param parent
 	 * @param child
 	 * @return
 	 */
-	public static int lost(Stack<Double> parent, Stack<Double> child)
+	public static int addedLeaf(Stack<Double> parent, Stack<Double> child)
 	{
-		int lost = 0;
+		int addedL = 0;
 		
-		return lost;
+		
+		
+		return addedL;
 	}
 	
 	/**
 	 * TODO write this method
+	 * this is a method that checks the internal edge of the tree
+	 * for featureIDs that were lost along this edge
+	 * we use the following general rule to determine a gene as lost:
+	 * parent <= 0.25 && child >= 0.75
 	 * @param parent
 	 * @param child
 	 * @return
 	 */
-	public static int shared(Stack<Double> parent, Stack<Double> child)
+	public static int lostInternal(Stack<Double> parent, Stack<Double> child)
 	{
-		int shared = 0;
+		int lostIn = 0;
 		
-		return shared;
+		return lostIn;
 	}
+	
 	/**
 	 * TODO write this method
+	 * this is a method that checks the leaf edge of the tree
+	 * for featureIDs that were lost along this edge
+	 * we use the following general rule to determine a gene as lost:
+	 * parent <= 0.25 && child == 0
 	 * @param parent
 	 * @param child
 	 * @return
 	 */
-	public static int neverThere(Stack<Double> parent, Stack<Double> child)
+	public static int lostLeaf(Stack<Double> parent, Stack<Double> child)
 	{
-		int neverThere = 0;
+		int lostL = 0;
 		
-		return neverThere;
+		return lostL;
+	}
+	
+	
+	/**
+	 * TODO write this method
+	 * this is a method that checks the internal edge of the tree
+	 * for featureIDs that were shared along this edge
+	 * we use the following general rule to determine a gene as shared:
+	 * parent <= 0.25 && child <= 0.25
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int sharedInternal(Stack<Double> parent, Stack<Double> child)
+	{
+		int sharedInt = 0;
+		
+		return sharedInt;
+	}
+	
+	/**
+	 * TODO write this method
+	 * this is a method that checks the leaf edge of the tree
+	 * for featureIDs that were shared along this edge
+	 * we use the following general rule to determine a gene as shared:
+	 * parent <= 0.25 && child == 1
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int sharedLeaf(Stack<Double> parent, Stack<Double> child)
+	{
+		int sharedL = 0;
+		
+		return sharedL;
+	}
+	
+	
+	/**
+	 * TODO write this method
+	 * this is a method that checks the internal edge of the tree
+	 * for featureIDs that were never there along this edge
+	 * we use the following general rule to determine a gene wasn't there:
+	 * parent >= 0.75 && child >= 0.75
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int neverThereInternal
+	(Stack<Double> parent, Stack<Double> child)
+	{
+		int neverThereInt = 0;
+		
+		return neverThereInt;
+	}
+	
+	/**
+	 * TODO write this method
+	 * this is a method that checks the internal edge of the tree
+	 * for featureIDs that were never there along this edge
+	 * we use the following general rule to determine a gene wasn't there:
+	 * parent >= 0.75 && child == 0
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static int neverThereLeaf(Stack<Double> parent, Stack<Double> child)
+	{
+		int neverThereL = 0;
+		
+		return neverThereL;
 	}
 
 }
