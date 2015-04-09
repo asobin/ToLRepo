@@ -6,6 +6,7 @@ public class Tree
 {
     static TreeNode<PhyloNodeID> root; //TreeNode that represents root of a tree
     String firstAncestor; //will hold the name of the parent at the root TreeNode.
+    int numNodes; //holds the value of the # of nodes in the tree
     int maxGenerations; //holds the value of the # of generations in the tree
     PhyloNodeID ID; //the TreeNode of the desired TreeNode
     List<PhyloNodeID> thisTreeNodesData; //holds the eye color of the desired people
@@ -18,6 +19,7 @@ public class Tree
     {
         root = null;
         maxGenerations = 0;
+        numNodes = 0;
         thisTreeNodesData = new ArrayList<PhyloNodeID>();
         siblings = new ArrayList<PhyloNodeID>();
         firstAncestor = null;
@@ -40,6 +42,21 @@ public class Tree
             return "there is no ancestor";
         }
     }
+    /**
+     * getNumNodes 
+     * Return  the number of nodes in this tree
+     * @return numNodes
+     */
+    public int getNumNodes()
+    {
+    	return numNodes;
+    }
+    
+    public boolean contains(String name)
+    {
+    	return contains(root, name);
+    }
+    
     /**
      * getNumberOfTreeNodes
      * Return the number of TreeNodes in this tree
@@ -83,6 +100,7 @@ public class Tree
         {
             return 0;
         }
+        
         maxGenerations = getMaxGenerations(root);
         return maxGenerations;
     }
@@ -143,6 +161,7 @@ public class Tree
         if(parentName == null && root == null)
         {
             root = new TreeNode<PhyloNodeID>(ID, null);
+            numNodes = 1;
             return true;
         }
         //When the parentName of the node being added refers to the root
@@ -167,26 +186,8 @@ public class Tree
         }
         //otherwise add the TreeNode and return true.
         addNewChild(root, parentName, ID);
+        numNodes++;
         return true;
-    }
-    /**
-     * contains
-     * Return true if the family tree contains TreeNode with given name,
-     * otherwise return false.
-     * @param name
-     * @return true iff the family tree contains name
-     */
-    public boolean contains(String name)
-    {
-        //return contains(root, name);
-        if(findPhyloNodeID(root,name) == null)
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
     }
     /**
      * removeWithName
@@ -195,24 +196,28 @@ public class Tree
      * @param name
      * @return true iff removal was valid (name exists)
      */
-    public boolean removeWithName(String name)
+    public boolean removePhyloNodeID(String name)
     {
         //If there is no such TreeNode, return false
         if(!contains(name))
         {
             return false;
         }
+        //if you are going to remove the root
         if(root.getPhyloNodeID().getName().equals(name))
         {
             root = null;
             maxGenerations = 0;
+            numNodes = 0;
             thisTreeNodesData = new ArrayList<PhyloNodeID>(); 
             siblings = new ArrayList<PhyloNodeID>();
             firstAncestor = null;
             return true;
         }
         // otherwise, return true after the removal
-        return removePhyloNodeID(name);
+        removePhyloNodeID(root, name);
+        numNodes--;
+        return true;
     }
     /**
      * removeTreeNode
@@ -220,7 +225,7 @@ public class Tree
      * @param name
      * @return true iff TreeNode was properly removed
      */
-    private boolean removePhyloNodeID(String name)
+    private boolean removePhyloNodeID(TreeNode<PhyloNodeID> root2, String name)
     {
         if(findPhyloNodeID(root,name) != null)
         {
@@ -243,8 +248,12 @@ public class Tree
     {
         //If there is no such TreeNode in the family tree or the TreeNode doesn't
         //have any sibling, return null.
-        siblings = new ArrayList<PhyloNodeID>();
-        siblings = getSiblings(root, name);
+    	if(!contains(name))
+    	{
+    		return null;
+    	}
+    	siblings = getSiblings(root,name);
+    	
         return siblings;
     }
     /**
@@ -308,6 +317,37 @@ public class Tree
         }
     }
     /**
+     * contains
+     * a method used to determine if the tree contains a 
+     * node with a specified name
+     * @param name
+     * @param testname
+     * @return
+     */
+    
+    private boolean contains(TreeNode<PhyloNodeID> name, String testname)
+    {
+    	if(name == null)
+    	{
+    		return false;
+    	}
+    	if(name.getPhyloNodeID().getName().equals(testname))
+    	{
+    		return true;
+    	}
+    	if(name.getChildren().isEmpty())
+    	{
+    		return false;
+    	}
+    	Iterator<TreeNode<PhyloNodeID>> itr = name.getChildren().iterator();
+    	while(itr.hasNext())
+    	{
+    		return contains(itr.next(), testname);
+    	}
+    	return contains(name, testname);
+    }
+    
+    /**
      * findPhyloNodeID
      * Returns the TreeNode with given name, otherwise
      * return null.
@@ -323,21 +363,12 @@ public class Tree
         }
         if(n.getPhyloNodeID().getName().equals(name))
         {
-            return n; //base
-        }
-        if(n.getChildren().isEmpty())
-        {
-            return null; //base
+            return  n; //base
         }
         Iterator<TreeNode<PhyloNodeID>> itr = n.getChildren().iterator();
         while(itr.hasNext())
         {
-            TreeNode<PhyloNodeID> tmp = findPhyloNodeID(itr.next(),name);
-            //when the recursion finds a TreeNode, return that TreeNode
-            if(tmp != null)
-            {
-                return tmp;
-            }
+        	contains(itr.next(), name);
         }
         return null;
     }
