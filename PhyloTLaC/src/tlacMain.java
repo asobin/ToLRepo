@@ -1,11 +1,6 @@
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Scanner;
 
 
@@ -31,6 +26,8 @@ public class tlacMain
 	 */
 	public static void main(String[] args) throws IOException, EmptyStackException
 	{
+		boolean done = false;
+		
 		if(args.length > 2 || args.length == 0)
 		{
 			System.out.println("Program accepts only " +
@@ -51,8 +48,9 @@ public class tlacMain
 		Tree tree = new Tree();
 		try //this is where the tree will be populated
 		{
-			
+
 			Scanner scn = new Scanner(treeFile);
+
 			while(scn.hasNextLine())
 			{
 				String[] lineData = scn.nextLine().split(regex);
@@ -61,44 +59,37 @@ public class tlacMain
 				if(lineData[0].isEmpty())
 				{
 					tree.addPhyloNodeID(ID1,  null); 
+
 				}//end if
-				
+
 				tree.addPhyloNodeID(ID1,lineData[0]);
+
 
 			}//end while	
 			scn.close(); 
+
 		}//end try
-		
+
 		catch(FileNotFoundException e)
 		{
 			System.out.println("file not found");
 		}
 		
-		System.out.println("Height: "+tree.getMaxGenerations());
-		System.out.println("Root ID: "+ tree.getFirstAncestor());
-		System.out.println("Number of nodes:  "
-		+ tree.getNumberOfTreeNodes());
-		
-		double newMatrix[][];
-		//BufferedWriter writer = new BufferedWriter(new FileWriter("fileOutput.txt", true));
-		newMatrix = getFile(args);
-		/**
-		 * if you want to transpose the array uncomment this section
-		 * double[][] finalMatrix = transpose(newMatrix);
-		for(int i=0; i<finalMatrix.length;i++){
-			for(int j=0; j<finalMatrix[0].length;j++)
-			{
-				writer.write(String.valueOf(finalMatrix[i][j])+",");
-
-			}
-			writer.newLine();
-		}
-		writer.close();
-		 **/
-		
+		while(!done)
+		{
+			double newMatrix[][];
+			newMatrix = getFile(args);
 			Scanner scn = new Scanner(System.in);
-			System.out.print("Enter a node ID: ");
+			System.out.print("Enter a node ID (press 'x' to exit): ");
 			String input = scn.nextLine();
+			
+			if(input.substring(0).equalsIgnoreCase("x"))
+			{
+				done = true;
+				System.out.println("exit");
+				break;
+			}
+			
 			if (input.length() > 2)
 			{	
 				if(tree.contains(input))
@@ -108,57 +99,97 @@ public class tlacMain
 					final String childName = input;
 					int parentsIndex = 0;
 					int childsIndex = 0;
+
+					System.out.println("Edge: "+parentName+"->"+childName);
+
 					File indexRefLookUp = new File(args[0]);
 					Scanner indexLU = new Scanner(indexRefLookUp);
 					String[] lineLU = indexLU.nextLine().split(regex);
 					indexLU.close();
-					for(int i =0; i < lineLU.length; i++)
+					for(int i = 0; i < lineLU.length; i++)
 					{
 						//determines index of parent
 						if(lineLU[i].equals(parentName))
 						{
 							parentsIndex = i;
+
 						}
+
 						//determines index of child
 						if(lineLU[i].equals(childName))
 						{
 							childsIndex = i;
+
 						}
-						
+
+
 					}//end for
-					
+
 					final int pI = parentsIndex;
-					System.out.println("Parent's index: "+pI);
 					final int cI = childsIndex;
-					System.out.println("Child's index: "+cI);
-					
-					Stack<Double> parentStack = new Stack<Double>();
+
+					Stack<Double> parentStackOne = new Stack<Double>();
+					Stack<Double> parentStackTwo = new Stack<Double>();
+					Stack<Double> parentStackThree = new Stack<Double>();
+					Stack<Double> parentStackFour = new Stack<Double>();
+
 					for(int f = 0; f < newMatrix.length; f++)
 					{
-						parentStack.push(newMatrix[f][pI]);
+						parentStackOne.push(newMatrix[f][pI]);
+						parentStackTwo.push(newMatrix[f][pI]);
+						parentStackThree.push(newMatrix[f][pI]);
+						parentStackFour.push(newMatrix[f][pI]);
 					}
-					Stack<Double> childStack = new Stack<Double>();
+
+					Stack<Double> childStackOne = new Stack<Double>();
+					Stack<Double> childStackTwo = new Stack<Double>();
+					Stack<Double> childStackThree = new Stack<Double>();
+					Stack<Double> childStackFour = new Stack<Double>();
+
 					for(int q=0; q < newMatrix.length; q++)
 					{
-						childStack.push(newMatrix[q][cI]);
+						childStackOne.push(newMatrix[q][cI]);
+						childStackTwo.push(newMatrix[q][cI]);
+						childStackThree.push(newMatrix[q][cI]);
+						childStackFour.push(newMatrix[q][cI]);
 					}
-					
+
 					//write methods that compare the values of the stacks
 					//first checking if internal or leaf edge
-					System.out.println("Internal Nodes added: "+
-							addedInternal(parentStack, childStack));
-					//addedLeaf(parentStack, childStack);
-					//lostInternal(parentStack, childStack);
-					//lostLeaf(parentStack, childStack);
-					//sharedInternal(parentStack, childStack);
-					//sharedLeaf(parentStack, childStack);
-					//neverThereInternal(parentStack, childStack);
-					//neverThereLeaf(parentStack, childStack);
-					
+					if(input.startsWith("1") || input.startsWith("2"))
+					{
+						System.out.println("Internal Nodes added: "+
+								addedInternal(parentStackOne, childStackOne));
+
+						System.out.println("Internal Nodes lost: " +
+								lostInternal(parentStackTwo, childStackTwo));
+
+						System.out.println("Internal Nodes shared: " +
+								sharedInternal(parentStackThree, childStackThree));
+
+						System.out.println("Internal Nodes never there: "+ 
+								neverThereInternal(parentStackFour, childStackFour));
+					}
+					else //outputs for the leaf nodes
+					{
+						System.out.println("Leaf Nodes added: "+
+								addedLeaf(parentStackOne, childStackOne));
+
+						System.out.println("Leaf Nodes lost: "+ 
+								lostLeaf(parentStackTwo, childStackTwo));
+
+						System.out.println("Leaf Nodes shared: "+
+								sharedLeaf(parentStackThree, childStackThree));
+
+						System.out.println("Leaf Nodes never there: "+
+								neverThereLeaf(parentStackFour, childStackFour));
+					}
+
 				}//end if
+
 			}//end if
-		
-		
+		}
+		System.exit(0);
 
 	}
 
@@ -182,18 +213,16 @@ public class tlacMain
 			//line is the line of input being read in thru the inputFile
 			int line = 0;
 			//array of doubles will hold the data to be put in the stacks
-			double [][] theData = new double [1000][firstLine.length];
+			double [][] theData = new double [28420][firstLine.length];
 			while(sc.hasNext())
 			{
 				String lineIn = sc.nextLine();
 				String[] lineInAsString = lineIn.split(regex);
-				//System.out.print(lineInAsString[1]+",");
-				for(int i = 2; i < lineInAsString.length; i++)
+				for(int i = 1; i < lineInAsString.length; i++)
 				{
 					theData[line][i] = Double.parseDouble(lineInAsString[i]);
 				}
 				line++;
-
 			}
 
 			sc.close();
@@ -212,30 +241,6 @@ public class tlacMain
 	}
 
 	/**
-	 * transpose method can be used if you wish to transpose the matrix
-	 * @param array
-	 * @return
-	 */
-	public static double[][] transpose (double[][] array) {
-		if (array == null || array.length == 0)//empty or unset array, nothing do to here
-			return array;
-
-		int width = array.length;
-		int height = array[0].length;
-
-		double[][] array_new = new double[height][width];
-
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
-				array_new[y][x] = array[x][y];
-			}
-		}
-		return array_new;
-	}//end transpose
-	
-	
-	/**
-	 * TODO write this method
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were added along this edge
 	 * we use the following general rule to determine a gene as added:
@@ -249,7 +254,7 @@ public class tlacMain
 			throws EmptyStackException
 	{
 		int addedIn = 0;
-		
+
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
 			double pval = parent.pop();
@@ -264,7 +269,6 @@ public class tlacMain
 	}
 
 	/**
-	 * TODO write this method
 	 * this is a method that checks the a leaf edge of the tree
 	 * for featureIDs that were added along this edge
 	 * we use the following general rule to determine a gene as added:
@@ -274,16 +278,24 @@ public class tlacMain
 	 * @return
 	 */
 	public static int addedLeaf(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int addedL = 0;
-		
-		
-		
+
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval >= 0.75 && cval == 1)
+			{
+				addedL++;
+			}
+		}
+
 		return addedL;
 	}
-	
+
 	/**
-	 * TODO write this method
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were lost along this edge
 	 * we use the following general rule to determine a gene as lost:
@@ -293,14 +305,23 @@ public class tlacMain
 	 * @return
 	 */
 	public static int lostInternal(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int lostIn = 0;
-		
+
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval <= 0.25 && cval >= 0.75)
+			{
+				lostIn++;
+			}
+		}
 		return lostIn;
 	}
-	
+
 	/**
-	 * TODO write this method
 	 * this is a method that checks the leaf edge of the tree
 	 * for featureIDs that were lost along this edge
 	 * we use the following general rule to determine a gene as lost:
@@ -310,15 +331,24 @@ public class tlacMain
 	 * @return
 	 */
 	public static int lostLeaf(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int lostL = 0;
-		
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval <= 0.25 && cval == 0)
+			{
+				lostL++;
+			}
+		}
+
 		return lostL;
 	}
-	
-	
+
+
 	/**
-	 * TODO write this method
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were shared along this edge
 	 * we use the following general rule to determine a gene as shared:
@@ -328,14 +358,22 @@ public class tlacMain
 	 * @return
 	 */
 	public static int sharedInternal(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int sharedInt = 0;
-		
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval <= 0.25 && cval <= 0.25)
+			{
+				sharedInt++;
+			}
+		}
 		return sharedInt;
 	}
-	
+
 	/**
-	 * TODO write this method
 	 * this is a method that checks the leaf edge of the tree
 	 * for featureIDs that were shared along this edge
 	 * we use the following general rule to determine a gene as shared:
@@ -345,15 +383,23 @@ public class tlacMain
 	 * @return
 	 */
 	public static int sharedLeaf(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int sharedL = 0;
-		
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval <= 0.25 && cval == 1.0)
+			{
+				sharedL++;
+			}
+		}
 		return sharedL;
 	}
-	
-	
+
+
 	/**
-	 * TODO write this method
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were never there along this edge
 	 * we use the following general rule to determine a gene wasn't there:
@@ -363,16 +409,23 @@ public class tlacMain
 	 * @return
 	 */
 	public static int neverThereInternal
-	(Stack<Double> parent, Stack<Double> child)
+	(Stack<Double> parent, Stack<Double> child) throws EmptyStackException
 	{
 		int neverThereInt = 0;
-		
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval >= 0.75 && cval >= 0.75)
+			{
+				neverThereInt++;
+			}
+		}
 		return neverThereInt;
 	}
-	
+
 	/**
-	 * TODO write this method
-	 * this is a method that checks the internal edge of the tree
+	 * this is a method that checks the leaf of the tree
 	 * for featureIDs that were never there along this edge
 	 * we use the following general rule to determine a gene wasn't there:
 	 * parent >= 0.75 && child == 0
@@ -381,9 +434,18 @@ public class tlacMain
 	 * @return
 	 */
 	public static int neverThereLeaf(Stack<Double> parent, Stack<Double> child)
+			throws EmptyStackException
 	{
 		int neverThereL = 0;
-		
+		while(!parent.isEmpty() && !child.isEmpty())
+		{
+			double pval = parent.pop();
+			double cval = child.pop();
+			if(pval >= 0.75 && cval == 0)
+			{
+				neverThereL++;
+			}
+		}
 		return neverThereL;
 	}
 
