@@ -1,6 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 
@@ -27,7 +30,7 @@ public class tlacMain
 	public static void main(String[] args) throws IOException, EmptyStackException
 	{
 		boolean done = false;
-		
+
 		if(args.length > 2 || args.length == 0)
 		{
 			System.out.println("Program accepts only " +
@@ -74,22 +77,23 @@ public class tlacMain
 		{
 			System.out.println("file not found");
 		}
-		
+
 		while(!done)
 		{
-			double newMatrix[][];
-			newMatrix = getFile(args);
+			DataContainer data = getFile(args);
+			double[][] newMatrix = data.matrix;
+			String[] featureIds = data.featureIds;
 			Scanner scn = new Scanner(System.in);
 			System.out.print("Enter a node ID (press 'x' to exit): ");
 			String input = scn.nextLine();
-			
+
 			if(input.substring(0).equalsIgnoreCase("x"))
 			{
 				done = true;
 				System.out.println("exit");
 				break;
 			}
-			
+
 			if (input.length() > 2)
 			{	
 				if(tree.contains(input))
@@ -128,10 +132,24 @@ public class tlacMain
 					final int pI = parentsIndex;
 					final int cI = childsIndex;
 
+					Stack<String> featureIdStackOne = new Stack<String>();
+					Stack<String> featureIdStackTwo = new Stack<String>();
+					Stack<String> featureIdStackThree = new Stack<String>();
+					Stack<String> featureIdStackFour = new Stack<String>();
+
+
 					Stack<Double> parentStackOne = new Stack<Double>();
 					Stack<Double> parentStackTwo = new Stack<Double>();
 					Stack<Double> parentStackThree = new Stack<Double>();
 					Stack<Double> parentStackFour = new Stack<Double>();
+
+					for(int n = 0; n < featureIds.length; n++)
+					{
+						featureIdStackOne.push(featureIds[n]);
+						featureIdStackTwo.push(featureIds[n]);
+						featureIdStackThree.push(featureIds[n]);
+						featureIdStackFour.push(featureIds[n]);
+					}
 
 					for(int f = 0; f < newMatrix.length; f++)
 					{
@@ -139,6 +157,7 @@ public class tlacMain
 						parentStackTwo.push(newMatrix[f][pI]);
 						parentStackThree.push(newMatrix[f][pI]);
 						parentStackFour.push(newMatrix[f][pI]);
+
 					}
 
 					Stack<Double> childStackOne = new Stack<Double>();
@@ -158,31 +177,136 @@ public class tlacMain
 					//first checking if internal or leaf edge
 					if(input.startsWith("1") || input.startsWith("2"))
 					{
-						System.out.println("Internal Nodes added: "+
-								addedInternal(parentStackOne, childStackOne));
+						ArrayList<String> addedInternal = 
+								addedInternal(parentStackOne, childStackOne, 
+										featureIdStackOne);
 
-						System.out.println("Internal Nodes lost: " +
-								lostInternal(parentStackTwo, childStackTwo));
+						ArrayList<String> lostInternal = 
+								lostInternal(parentStackTwo, childStackTwo, 
+										featureIdStackTwo);
 
-						System.out.println("Internal Nodes shared: " +
-								sharedInternal(parentStackThree, childStackThree));
+						ArrayList<String> sharedInternal = 
+								sharedInternal(parentStackThree, childStackThree, 
+										featureIdStackThree);
+						
+						ArrayList<String> neverThereInternal = 
+								neverThereInternal(parentStackFour, childStackFour, 
+										featureIdStackFour);
+
+						System.out.println("Internal Nodes added: " + 
+								addedInternal.size());
+
+						System.out.println("Internal Nodes lost: " + 
+								lostInternal.size());
+
+						System.out.println("Internal Nodes shared: " + 
+								sharedInternal.size());
 
 						System.out.println("Internal Nodes never there: "+ 
-								neverThereInternal(parentStackFour, childStackFour));
+								neverThereInternal.size());
+						
+						//write the added internal file
+						PrintWriter pwAddedInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Added/Edge_"+parentName+"_"+childName+"_Added.txt");
+						Iterator<String> itr = addedInternal.iterator();
+						while(itr.hasNext())
+						{
+							pwAddedInt.write(itr.next()+" ");
+						}
+						pwAddedInt.close();
+						
+						//write the lost internal file
+						PrintWriter pwLostInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Lost/Edge_"+parentName+"_"+childName+"_Lost.txt");
+						Iterator<String> itrB = lostInternal.iterator();
+						while(itrB.hasNext())
+						{
+							pwLostInt.write(itrB.next()+" ");
+						}
+						pwLostInt.close();
+						
+						//write the shared internal file
+						PrintWriter pwSharedInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Shared/Edge_"+parentName+"_"+childName+"_Shared.txt");
+						Iterator<String> itrC = sharedInternal.iterator();
+						while(itrC.hasNext())
+						{
+							pwSharedInt.write(itrC.next()+" ");
+						}
+						pwSharedInt.close();
+						
+						//write the never there internal file
+						PrintWriter pwNeverThereInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Never There/Edge_"+parentName+"_"+childName+"_Never_There.txt");
+						Iterator<String> itrD = neverThereInternal.iterator();
+						while(itrD.hasNext())
+						{
+							pwNeverThereInt.write(itrD.next()+" ");
+						}
+						pwNeverThereInt.close();
+						
 					}
 					else //outputs for the leaf nodes
 					{
+						ArrayList<String> addedLeaf = 
+								addedLeaf(parentStackOne, childStackOne, 
+										featureIdStackOne);
+
+						ArrayList<String> lostLeaf = 
+								lostLeaf(parentStackTwo, childStackTwo, 
+										featureIdStackTwo);
+
+						ArrayList<String> sharedLeaf = 
+								sharedLeaf(parentStackThree, childStackThree, 
+										featureIdStackThree);
+						
+						ArrayList<String> neverThereLeaf = 
+								neverThereLeaf(parentStackFour, childStackFour, 
+										featureIdStackFour);
+						
 						System.out.println("Leaf Nodes added: "+
-								addedLeaf(parentStackOne, childStackOne));
+								addedLeaf.size());
 
 						System.out.println("Leaf Nodes lost: "+ 
-								lostLeaf(parentStackTwo, childStackTwo));
+								lostLeaf.size());
 
 						System.out.println("Leaf Nodes shared: "+
-								sharedLeaf(parentStackThree, childStackThree));
+								sharedLeaf.size());
 
 						System.out.println("Leaf Nodes never there: "+
-								neverThereLeaf(parentStackFour, childStackFour));
+								neverThereLeaf.size());
+						
+						//write the added leaf file
+						PrintWriter pwAddedLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Added/Edge_"+parentName+"_"+childName+"_Added.txt");
+						Iterator<String> itrE = addedLeaf.iterator();
+						while(itrE.hasNext())
+						{
+							pwAddedLeaf.write(itrE.next()+" ");
+						}
+						pwAddedLeaf.close();
+						
+						//write the lost internal file
+						PrintWriter pwLostLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Lost/Edge_"+parentName+"_"+childName+"_Lost.txt");
+						Iterator<String> itrF = lostLeaf.iterator();
+						while(itrF.hasNext())
+						{
+							pwLostLeaf.write(itrF.next()+" ");
+						}
+						pwLostLeaf.close();
+						
+						//write the shared internal file
+						PrintWriter pwSharedLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Shared/Edge_"+parentName+"_"+childName+"_Shared.txt");
+						Iterator<String> itrG = sharedLeaf.iterator();
+						while(itrG.hasNext())
+						{
+							pwSharedLeaf.write(itrG.next()+" ");
+						}
+						pwSharedLeaf.close();
+						
+						//write the never there internal file
+						PrintWriter pwNeverThereLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Never There/Edge_"+parentName+"_"+childName+"_Never_There.txt");
+						Iterator<String> itrH = neverThereLeaf.iterator();
+						while(itrH.hasNext())
+						{
+							pwNeverThereLeaf.write(itrH.next()+" ");
+						}
+						pwNeverThereLeaf.close();
 					}
 
 				}//end if
@@ -199,7 +323,7 @@ public class tlacMain
 	 * that will be used do the data analysis
 	 * @param args
 	 */
-	public static double[][] getFile(String[] args)
+	public static DataContainer getFile(String[] args)
 	{
 		try 
 		{
@@ -209,7 +333,7 @@ public class tlacMain
 			Scanner sc = new Scanner(initialFile);
 			//first line is special case
 			String[] firstLine = sc.nextLine().split(regex);
-
+			String[] featureIds = new String[28420];
 			//line is the line of input being read in thru the inputFile
 			int line = 0;
 			//array of doubles will hold the data to be put in the stacks
@@ -222,12 +346,13 @@ public class tlacMain
 				{
 					theData[line][i] = Double.parseDouble(lineInAsString[i]);
 				}
+				featureIds[line] = lineInAsString[0].replaceAll("\"", "");
 				line++;
 			}
 
 			sc.close();
 
-			return theData;
+			return new DataContainer(theData, featureIds);
 		}
 		catch (NumberFormatException e) 
 		{
@@ -250,23 +375,25 @@ public class tlacMain
 	 * @return
 	 * @throws EmptyStackException 
 	 */
-	public static int addedInternal(Stack<Double> parent, Stack<Double> child) 
-			throws EmptyStackException
-	{
-		int addedIn = 0;
+	public static ArrayList<String> addedInternal(Stack<Double> parent, Stack<Double> child,
+			Stack<String> featureIds) 
+					throws EmptyStackException
+					{
+		ArrayList<String> addedInternal = new ArrayList<String>();
 
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
 			double pval = parent.pop();
 			double cval = child.pop();
+			String featureID = featureIds.pop();
 			if(pval >= 0.75 && cval <= 0.25)
 			{
-				addedIn++;
+				addedInternal.add(featureID);
 			}
 
 		}
-		return addedIn;
-	}
+		return addedInternal;
+					}
 
 	/**
 	 * this is a method that checks the a leaf edge of the tree
@@ -277,23 +404,25 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int addedLeaf(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int addedL = 0;
+	public static ArrayList<String> addedLeaf(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> addedLeaf= new ArrayList<String>();
 
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval >= 0.75 && cval == 1)
 			{
-				addedL++;
+				addedLeaf.add(featureID);
 			}
 		}
 
-		return addedL;
-	}
+		return addedLeaf;
+					}
 
 	/**
 	 * this is a method that checks the internal edge of the tree
@@ -304,22 +433,24 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int lostInternal(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int lostIn = 0;
+	public static ArrayList<String> lostInternal(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> lostInternal = new ArrayList<String>();
 
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval <= 0.25 && cval >= 0.75)
 			{
-				lostIn++;
+				lostInternal.add(featureID);
 			}
 		}
-		return lostIn;
-	}
+		return lostInternal;
+					}
 
 	/**
 	 * this is a method that checks the leaf edge of the tree
@@ -330,22 +461,24 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int lostLeaf(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int lostL = 0;
+	public static ArrayList<String> lostLeaf(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> lostLeaf = new ArrayList<String>();
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval <= 0.25 && cval == 0)
 			{
-				lostL++;
+				lostLeaf.add(featureID);
 			}
 		}
 
-		return lostL;
-	}
+		return lostLeaf;
+					}
 
 
 	/**
@@ -357,21 +490,23 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int sharedInternal(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int sharedInt = 0;
+	public static ArrayList<String> sharedInternal(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> sharedInternal = new ArrayList<String>();
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval <= 0.25 && cval <= 0.25)
 			{
-				sharedInt++;
+				sharedInternal.add(featureID);
 			}
 		}
-		return sharedInt;
-	}
+		return sharedInternal;
+					}
 
 	/**
 	 * this is a method that checks the leaf edge of the tree
@@ -382,21 +517,23 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int sharedLeaf(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int sharedL = 0;
+	public static ArrayList<String> sharedLeaf(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> sharedLeaf = new ArrayList<String>();
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval <= 0.25 && cval == 1.0)
 			{
-				sharedL++;
+				sharedLeaf.add(featureID);
 			}
 		}
-		return sharedL;
-	}
+		return sharedLeaf;
+					}
 
 
 	/**
@@ -408,21 +545,23 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int neverThereInternal
-	(Stack<Double> parent, Stack<Double> child) throws EmptyStackException
-	{
-		int neverThereInt = 0;
+	public static ArrayList<String> neverThereInternal
+	(Stack<Double> parent, Stack<Double> child, Stack<String> featureIds) 
+			throws EmptyStackException
+			{
+		ArrayList<String> neverThereInternal = new ArrayList<String>();
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval >= 0.75 && cval >= 0.75)
 			{
-				neverThereInt++;
+				neverThereInternal.add(featureID);
 			}
 		}
-		return neverThereInt;
-	}
+		return neverThereInternal;
+			}
 
 	/**
 	 * this is a method that checks the leaf of the tree
@@ -433,20 +572,22 @@ public class tlacMain
 	 * @param child
 	 * @return
 	 */
-	public static int neverThereLeaf(Stack<Double> parent, Stack<Double> child)
-			throws EmptyStackException
-	{
-		int neverThereL = 0;
+	public static ArrayList<String> neverThereLeaf(Stack<Double> parent, 
+			Stack<Double> child, Stack<String> featureIds)
+					throws EmptyStackException
+					{
+		ArrayList<String> neverThereLeaf = new ArrayList<String>();
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
+			String featureID = featureIds.pop();
 			double pval = parent.pop();
 			double cval = child.pop();
 			if(pval >= 0.75 && cval == 0)
 			{
-				neverThereL++;
+				neverThereLeaf.add(featureID);
 			}
 		}
-		return neverThereL;
-	}
+		return neverThereLeaf;
+					}
 
 }
