@@ -30,7 +30,6 @@ public class Stack<E> implements StackADT<E>
 	{
 		return size;
 	}
-
 	/**
 	 * Checks if the stack is empty.
 	 * @return true if stack is empty; otherwise false

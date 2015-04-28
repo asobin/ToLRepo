@@ -1,4 +1,3 @@
-
-public class EmptyStackException extends Exception{
-
+public class EmptyStackException extends Exception
+{
 }

@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
- 
 public class Tree
 {
     static TreeNode<PhyloNodeID> root; //TreeNode that represents root of a tree
@@ -21,8 +20,7 @@ public class Tree
         thisTreeNodesData = new ArrayList<PhyloNodeID>();
         siblings = new ArrayList<PhyloNodeID>();
         firstAncestor = null;
-    }
-    
+    }    
     /**
      * getFirstAncestor
      * gets the name of the first ancestor in this family tree
@@ -341,6 +339,5 @@ public class Tree
             }
         }
         return null;
-    }
-    
+    }   
 }

@@ -5,9 +5,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
-
-
-
 /**
  * tlacMain
  * this is the main class for this program PhyloTLaC which stands for 
@@ -30,14 +27,12 @@ public class tlacMain
 	public static void main(String[] args) throws IOException, EmptyStackException
 	{
 		boolean done = false;
-
 		if(args.length > 2 || args.length == 0)
 		{
 			System.out.println("Program accepts only " +
 					"two command line arguments. Goodbye");
 			System.exit(-1);
 		}
-
 		//next we read in and generate the tree from command line args
 		File treeFile = new File(args[1]);
 		//makes sure file contents exist and are readable
@@ -46,14 +41,11 @@ public class tlacMain
 			System.out.println("Error: cannot access input file");
 			System.exit(-1);
 		}
-
 		//setup the tree
 		Tree tree = new Tree();
 		try //this is where the tree will be populated
 		{
-
 			Scanner scn = new Scanner(treeFile);
-
 			while(scn.hasNextLine())
 			{
 				String[] lineData = scn.nextLine().split(regex);
@@ -64,20 +56,14 @@ public class tlacMain
 					tree.addPhyloNodeID(ID1,  null); 
 
 				}//end if
-
 				tree.addPhyloNodeID(ID1,lineData[0]);
-
-
 			}//end while	
 			scn.close(); 
-
 		}//end try
-
 		catch(FileNotFoundException e)
 		{
 			System.out.println("file not found");
 		}
-
 		while(!done)
 		{
 			DataContainer data = getFile(args);
@@ -86,14 +72,12 @@ public class tlacMain
 			Scanner scn = new Scanner(System.in);
 			System.out.print("Enter a node ID (press 'x' to exit): ");
 			String input = scn.nextLine();
-
 			if(input.substring(0).equalsIgnoreCase("x"))
 			{
 				done = true;
 				System.out.println("exit");
 				break;
 			}
-
 			if (input.length() > 2)
 			{	
 				if(tree.contains(input))
@@ -103,9 +87,7 @@ public class tlacMain
 					final String childName = input;
 					int parentsIndex = 0;
 					int childsIndex = 0;
-
 					System.out.println("Edge: "+parentName+"->"+childName);
-
 					File indexRefLookUp = new File(args[0]);
 					Scanner indexLU = new Scanner(indexRefLookUp);
 					String[] lineLU = indexLU.nextLine().split(regex);
@@ -116,33 +98,23 @@ public class tlacMain
 						if(lineLU[i].equals(parentName))
 						{
 							parentsIndex = i;
-
 						}
-
 						//determines index of child
 						if(lineLU[i].equals(childName))
 						{
 							childsIndex = i;
-
 						}
-
-
 					}//end for
-
 					final int pI = parentsIndex;
 					final int cI = childsIndex;
-
 					Stack<String> featureIdStackOne = new Stack<String>();
 					Stack<String> featureIdStackTwo = new Stack<String>();
 					Stack<String> featureIdStackThree = new Stack<String>();
 					Stack<String> featureIdStackFour = new Stack<String>();
-
-
 					Stack<Double> parentStackOne = new Stack<Double>();
 					Stack<Double> parentStackTwo = new Stack<Double>();
 					Stack<Double> parentStackThree = new Stack<Double>();
 					Stack<Double> parentStackFour = new Stack<Double>();
-
 					for(int n = 0; n < featureIds.length; n++)
 					{
 						featureIdStackOne.push(featureIds[n]);
@@ -150,21 +122,17 @@ public class tlacMain
 						featureIdStackThree.push(featureIds[n]);
 						featureIdStackFour.push(featureIds[n]);
 					}
-
 					for(int f = 0; f < newMatrix.length; f++)
 					{
 						parentStackOne.push(newMatrix[f][pI]);
 						parentStackTwo.push(newMatrix[f][pI]);
 						parentStackThree.push(newMatrix[f][pI]);
 						parentStackFour.push(newMatrix[f][pI]);
-
 					}
-
 					Stack<Double> childStackOne = new Stack<Double>();
 					Stack<Double> childStackTwo = new Stack<Double>();
 					Stack<Double> childStackThree = new Stack<Double>();
 					Stack<Double> childStackFour = new Stack<Double>();
-
 					for(int q=0; q < newMatrix.length; q++)
 					{
 						childStackOne.push(newMatrix[q][cI]);
@@ -172,7 +140,6 @@ public class tlacMain
 						childStackThree.push(newMatrix[q][cI]);
 						childStackFour.push(newMatrix[q][cI]);
 					}
-
 					//write methods that compare the values of the stacks
 					//first checking if internal or leaf edge
 					if(input.startsWith("1") || input.startsWith("2"))
@@ -180,31 +147,23 @@ public class tlacMain
 						ArrayList<String> addedInternal = 
 								addedInternal(parentStackOne, childStackOne, 
 										featureIdStackOne);
-
 						ArrayList<String> lostInternal = 
 								lostInternal(parentStackTwo, childStackTwo, 
 										featureIdStackTwo);
-
 						ArrayList<String> sharedInternal = 
 								sharedInternal(parentStackThree, childStackThree, 
-										featureIdStackThree);
-						
+										featureIdStackThree);					
 						ArrayList<String> neverThereInternal = 
 								neverThereInternal(parentStackFour, childStackFour, 
 										featureIdStackFour);
-
 						System.out.println("Internal Nodes added: " + 
 								addedInternal.size());
-
 						System.out.println("Internal Nodes lost: " + 
 								lostInternal.size());
-
 						System.out.println("Internal Nodes shared: " + 
 								sharedInternal.size());
-
 						System.out.println("Internal Nodes never there: "+ 
-								neverThereInternal.size());
-						
+								neverThereInternal.size());				
 						//write the added internal file
 						PrintWriter pwAddedInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Added/Edge_"+parentName+"_"+childName+"_Added.txt");
 						Iterator<String> itr = addedInternal.iterator();
@@ -212,8 +171,7 @@ public class tlacMain
 						{
 							pwAddedInt.write(itr.next()+" ");
 						}
-						pwAddedInt.close();
-						
+						pwAddedInt.close();			
 						//write the lost internal file
 						PrintWriter pwLostInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Lost/Edge_"+parentName+"_"+childName+"_Lost.txt");
 						Iterator<String> itrB = lostInternal.iterator();
@@ -221,8 +179,7 @@ public class tlacMain
 						{
 							pwLostInt.write(itrB.next()+" ");
 						}
-						pwLostInt.close();
-						
+						pwLostInt.close();			
 						//write the shared internal file
 						PrintWriter pwSharedInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Shared/Edge_"+parentName+"_"+childName+"_Shared.txt");
 						Iterator<String> itrC = sharedInternal.iterator();
@@ -230,8 +187,7 @@ public class tlacMain
 						{
 							pwSharedInt.write(itrC.next()+" ");
 						}
-						pwSharedInt.close();
-						
+						pwSharedInt.close();				
 						//write the never there internal file
 						PrintWriter pwNeverThereInt = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Never There/Edge_"+parentName+"_"+childName+"_Never_There.txt");
 						Iterator<String> itrD = neverThereInternal.iterator();
@@ -239,39 +195,30 @@ public class tlacMain
 						{
 							pwNeverThereInt.write(itrD.next()+" ");
 						}
-						pwNeverThereInt.close();
-						
+						pwNeverThereInt.close();					
 					}
 					else //outputs for the leaf nodes
 					{
 						ArrayList<String> addedLeaf = 
 								addedLeaf(parentStackOne, childStackOne, 
 										featureIdStackOne);
-
 						ArrayList<String> lostLeaf = 
 								lostLeaf(parentStackTwo, childStackTwo, 
 										featureIdStackTwo);
-
 						ArrayList<String> sharedLeaf = 
 								sharedLeaf(parentStackThree, childStackThree, 
-										featureIdStackThree);
-						
+										featureIdStackThree);					
 						ArrayList<String> neverThereLeaf = 
 								neverThereLeaf(parentStackFour, childStackFour, 
-										featureIdStackFour);
-						
+										featureIdStackFour);						
 						System.out.println("Leaf Nodes added: "+
 								addedLeaf.size());
-
 						System.out.println("Leaf Nodes lost: "+ 
 								lostLeaf.size());
-
 						System.out.println("Leaf Nodes shared: "+
 								sharedLeaf.size());
-
 						System.out.println("Leaf Nodes never there: "+
-								neverThereLeaf.size());
-						
+								neverThereLeaf.size());					
 						//write the added leaf file
 						PrintWriter pwAddedLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Added/Edge_"+parentName+"_"+childName+"_Added.txt");
 						Iterator<String> itrE = addedLeaf.iterator();
@@ -279,8 +226,7 @@ public class tlacMain
 						{
 							pwAddedLeaf.write(itrE.next()+" ");
 						}
-						pwAddedLeaf.close();
-						
+						pwAddedLeaf.close();					
 						//write the lost internal file
 						PrintWriter pwLostLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Lost/Edge_"+parentName+"_"+childName+"_Lost.txt");
 						Iterator<String> itrF = lostLeaf.iterator();
@@ -288,8 +234,7 @@ public class tlacMain
 						{
 							pwLostLeaf.write(itrF.next()+" ");
 						}
-						pwLostLeaf.close();
-						
+						pwLostLeaf.close();					
 						//write the shared internal file
 						PrintWriter pwSharedLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Shared/Edge_"+parentName+"_"+childName+"_Shared.txt");
 						Iterator<String> itrG = sharedLeaf.iterator();
@@ -297,8 +242,7 @@ public class tlacMain
 						{
 							pwSharedLeaf.write(itrG.next()+" ");
 						}
-						pwSharedLeaf.close();
-						
+						pwSharedLeaf.close();				
 						//write the never there internal file
 						PrintWriter pwNeverThereLeaf = new PrintWriter("C:/Users/Alexander/Documents/PernaProjectDirectoryMain/Never There/Edge_"+parentName+"_"+childName+"_Never_There.txt");
 						Iterator<String> itrH = neverThereLeaf.iterator();
@@ -308,15 +252,11 @@ public class tlacMain
 						}
 						pwNeverThereLeaf.close();
 					}
-
 				}//end if
-
 			}//end if
 		}
 		System.exit(0);
-
 	}
-
 	/**
 	 * getFile
 	 * method is used to import the file data and setup the tree and stack
@@ -349,9 +289,7 @@ public class tlacMain
 				featureIds[line] = lineInAsString[0].replaceAll("\"", "");
 				line++;
 			}
-
 			sc.close();
-
 			return new DataContainer(theData, featureIds);
 		}
 		catch (NumberFormatException e) 
@@ -364,7 +302,6 @@ public class tlacMain
 		}
 		return null;
 	}
-
 	/**
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were added along this edge
@@ -380,7 +317,6 @@ public class tlacMain
 					throws EmptyStackException
 					{
 		ArrayList<String> addedInternal = new ArrayList<String>();
-
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
 			double pval = parent.pop();
@@ -390,11 +326,9 @@ public class tlacMain
 			{
 				addedInternal.add(featureID);
 			}
-
 		}
 		return addedInternal;
 					}
-
 	/**
 	 * this is a method that checks the a leaf edge of the tree
 	 * for featureIDs that were added along this edge
@@ -409,7 +343,6 @@ public class tlacMain
 					throws EmptyStackException
 					{
 		ArrayList<String> addedLeaf= new ArrayList<String>();
-
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
 			String featureID = featureIds.pop();
@@ -420,10 +353,8 @@ public class tlacMain
 				addedLeaf.add(featureID);
 			}
 		}
-
 		return addedLeaf;
 					}
-
 	/**
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were lost along this edge
@@ -438,7 +369,6 @@ public class tlacMain
 					throws EmptyStackException
 					{
 		ArrayList<String> lostInternal = new ArrayList<String>();
-
 		while(!parent.isEmpty() && !child.isEmpty())
 		{
 			String featureID = featureIds.pop();
@@ -451,7 +381,6 @@ public class tlacMain
 		}
 		return lostInternal;
 					}
-
 	/**
 	 * this is a method that checks the leaf edge of the tree
 	 * for featureIDs that were lost along this edge
@@ -476,11 +405,8 @@ public class tlacMain
 				lostLeaf.add(featureID);
 			}
 		}
-
 		return lostLeaf;
 					}
-
-
 	/**
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were shared along this edge
@@ -507,7 +433,6 @@ public class tlacMain
 		}
 		return sharedInternal;
 					}
-
 	/**
 	 * this is a method that checks the leaf edge of the tree
 	 * for featureIDs that were shared along this edge
@@ -534,8 +459,6 @@ public class tlacMain
 		}
 		return sharedLeaf;
 					}
-
-
 	/**
 	 * this is a method that checks the internal edge of the tree
 	 * for featureIDs that were never there along this edge
@@ -562,7 +485,6 @@ public class tlacMain
 		}
 		return neverThereInternal;
 			}
-
 	/**
 	 * this is a method that checks the leaf of the tree
 	 * for featureIDs that were never there along this edge
@@ -589,5 +511,4 @@ public class tlacMain
 		}
 		return neverThereLeaf;
 					}
-
 }
