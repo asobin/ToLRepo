@@ -24,7 +24,8 @@ These are the distributions of the OrthoMCL outputs for 312 taxa including our 1
 
 ![result pt 1](https://github.com/asobin/ToLRepo/blob/master/images/resultno1.jpg)
 
-#### Figure 1--Species tree of the family Enterobacteriaceae. The leaf names on the tree use encoded.
+#### Figure 1--Species tree of the family Enterobacteriaceae. 
+ (The leaf names on the tree are encoded)
 
 ![result pt 2](https://github.com/asobin/ToLRepo/blob/master/images/result2.png)
 
