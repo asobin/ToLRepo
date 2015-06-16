@@ -7,7 +7,7 @@ The aim of this study is to **determine the specific protein variations througho
 ### Introduction
 * Previously, protein orthology data was determined for a group of 312 taxa (see Previous Discovery)
 * Following this, a genome-scale species tree for 110 taxa that includes representatives of all named species of Enterobacteriaceae was built.
-* We have conducted a large scale analysis of orthology among the proteins of these 110 taxa and created a character matrix describing the presence and absence of members of eac h ortholog group (set of orthologous genes) in each taxon.
+* We have conducted a large scale analysis of orthology among the proteins of these 110 taxa and created a character matrix describing the presence and absence of members of each ortholog group (set of orthologous genes) in each taxon.
 * The species tree and orthology  data were input for a marginal ancestral state inference analysis. 
 * The outputs were used in the PhyloTLaC program to determine protein variation across the species tree.
 
@@ -37,12 +37,12 @@ These are the distributions of the OrthoMCL outputs for 312 taxa including our 1
 
 ![result pt 3](https://github.com/asobin/ToLRepo/blob/master/images/result3.jpg)
 
-**Figure 3--Describes the effect that sharing and losing proteins has on the internal nodes length of the tree’s edges.**
+**Figure 3--Describes the effect (internal edges only) that sharing and losing proteins has on the length of the tree’s edges.**
 
 
 ![result pt 4](https://github.com/asobin/ToLRepo/blob/master/images/result4.jpg)
 
-**Figure 4--Describes the effect that sharing and losing proteins has on the tip's length of the tree’s edges.**
+**Figure 4--Describes the effect (tip edges only) that sharing and losing proteins has on the length of the tree’s edges.**
 
 
 ## Conclusion
