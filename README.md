@@ -21,7 +21,22 @@ These are the distributions of the OrthoMCL outputs for 312 taxa including our 1
 ![image of the methods] (https://github.com/asobin/ToLRepo/blob/master/images/methods.jpg)
 
 ### Results
-![image of the results] (url)
+
+![result pt 1](https://github.com/asobin/ToLRepo/blob/master/images/resultno1.jpg)
+
+or captions here?
+
+![result pt 2](https://github.com/asobin/ToLRepo/blob/master/images/result2.png)
+
+testing for accuracy
+
+![result pt 3](https://github.com/asobin/ToLRepo/blob/master/images/result3.jpg)
+
+just getting a look at things
+
+![result pt 4](https://github.com/asobin/ToLRepo/blob/master/images/result4.jpg)
+
+(caption here?)
 
 ## Conclusion
 * **The file system developed here contains the specific protein variations for the entire Enterobacteriaceae Family.**
