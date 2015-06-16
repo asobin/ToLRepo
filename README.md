@@ -24,20 +24,20 @@ These are the distributions of the OrthoMCL outputs for 312 taxa including our 1
 
 ![result pt 1](https://github.com/asobin/ToLRepo/blob/master/images/resultno1.jpg)
 
-#### Figure 1--Species tree of the family Enterobacteriaceae. 
+**Figure 1--Species tree of the family Enterobacteriaceae.** 
  (The leaf names on the tree are encoded)
 
 ![result pt 2](https://github.com/asobin/ToLRepo/blob/master/images/result2.png)
 
-#### Figure 2--Tables describing the edge comparisons of the tree. Each table summarizes a specific set or subset of the tree where #’s refer to the number of proteins lost/added/shared at a given edge. 
+**Figure 2--Tables describing the edge comparisons of the tree. Each table summarizes a specific set or subset of the tree where #’s refer to the number of proteins lost/added/shared at a given edge.** 
 
 ![result pt 3](https://github.com/asobin/ToLRepo/blob/master/images/result3.jpg)
 
-#### Figure 3--Describes the effect that sharing and losing proteins has on the internal nodes length of the tree’s edges.
+**Figure 3--Describes the effect that sharing and losing proteins has on the internal nodes length of the tree’s edges.**
 
 ![result pt 4](https://github.com/asobin/ToLRepo/blob/master/images/result4.jpg)
 
-#### Figure 4--Describes the effect that sharing and losing proteins has on the tip's length of the tree’s edges.
+**Figure 4--Describes the effect that sharing and losing proteins has on the tip's length of the tree’s edges.**
 
 
 ## Conclusion
