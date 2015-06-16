@@ -2,7 +2,7 @@
 #### Determining and recording protein variations throughout the evolutionary history of the family Enterobacteriaceae
 ======
 ### Abstract
-The aim of this study is to determine the specific protein variations throughout the evolutionary history of the family Enterobacteriaceae based on genomic and predicted data.  By writing a program that determines these variations it is now possible to analyze the rates, patterns, and identities of protein acquisitions and losses over the entire span of this family’s tree. This data should shed light on the genetic profiles of this highly studied family of bacteria and give other researchers clues as to which proteins are most vital, conserved, and or unique among this family’s 110 taxa.
+The aim of this study is to **determine the specific protein variations throughout the evolutionary history of the family Enterobacteriaceae based on genomic and predicted data.**  By writing a program that determines these variations it is now possible to analyze the rates, patterns, and identities of protein acquisitions and losses over the entire span of this family’s tree. This data should shed light on the genetic profiles of this highly studied family of bacteria and give other researchers clues as to which proteins are most vital, conserved, and or unique among this family’s 110 taxa.
 
 ### Introduction
 * Previously, protein orthology data was determined for a group of 312 taxa (see Previous Discovery)
@@ -22,5 +22,5 @@ These are the distributions of the OrthoMCL outputs for 312 taxa including our 1
 ![image of the results] (url)
 
 ## Conclusion
-* The file system developed here contains the specific  protein variations for the entire Enterobacteriaceae Family.
-* For the tree, it was determined that length of the branches is correlated to number of proteins shared between parent and child node.
+* **The file system developed here contains the specific protein variations for the entire Enterobacteriaceae Family.**
+* **For the tree, it was determined that length of the branches is correlated to number of proteins shared between parent and child node.**
