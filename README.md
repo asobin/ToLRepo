@@ -12,11 +12,11 @@ The aim of this study is to **determine the specific protein variations througho
 * The outputs were used in the PhyloTLaC program to determine protein variation across the species tree.
 
 ### Previous Discovery
-![image of previous discovery] (url)
+![image of previous discovery] (https://github.com/asobin/ToLRepo/blob/master/images/orthologGroupPics.jpg)
 These are the distributions of the OrthoMCL outputs for 312 taxa including our 110. A) Shows the distribution of the number of genomes represented in a given ortholog group. Most ortholog groups represent only a small number of genomes.  B) Same plot as (A) but zoomed in vertical axis to show spike in the [250,300] genomes range. C) Shows the distribution of the number of genes in a given ortholog group with respect to the number of ortholog groups in total. Most ortholog groups contain only a small number of genes. D) Is a zoomed in version of (C) meant to emphasize the spike between [250,300].
 
 ### Methods
-![image of the methods] (url)
+![image of the methods] (https://github.com/asobin/ToLRepo/blob/master/images/methods.jpg)
 
 ### Results
 ![image of the results] (url)
