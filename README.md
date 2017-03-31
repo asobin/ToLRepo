@@ -1,4 +1,4 @@
-# [Assembling the Tree of Life: Enterobacteriaceae] (http://atol.genetics.wisc.edu/)
+# [Assembling the Tree of Life: Enterobacteriaceae](http://atol.genetics.wisc.edu/)
 #### Determining and recording protein variations throughout the evolutionary history of the family Enterobacteriaceae
 ======
 ### Abstract
